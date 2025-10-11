@@ -9,20 +9,37 @@
             font-family: sans-serif;
             text-align: center;
         }
+
         .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 10px;
             background-color: #f5f5f5;
         }
+
+        .logo img {
+            height: 80px;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            color: #007BFF; /* Bootstrap blue */
+            margin-left: 15px;
+            font-weight: bold;
+        }
+
         iframe {
             width: 100%;
-            height: 90vh;
+            height: 100vh;
             border: none;
         }
     </style>
 </head>
 <body>
     <div class="logo">
-        <img src="logo.png".png" alt="76 Zetels Logo" height="80">
+        <img src="logo.png" alt="76 Zetels Logo">
+        <div class="logo-text">76 Zetels</div>
     </div>
 
     <iframe src="https://76zetels.streamlit.app/?embed=True"></iframe>
