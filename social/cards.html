@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>76 Zetels – social cards</title>
+<!-- Social media cards (1080x1350). Open cards.html#coalities, #kansen, #premier, #formatie, #trend, #eerstekamer,
+     #zetels, #halfrond, #blokken, #blokkentrend, #blokkenhistorie, #onmisbaar or an own card
+     #combinatie?met=VVD&zonder=PRO,PVV (optional &titel=...);
+     make_assets.py screenshots each card to a PNG. Data: ../data/current.json -->
+<style id="fonts">
+@font-face { font-family: "Archivo"; font-weight: 700; src: url(fonts/archivo-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-weight: 800; src: url(fonts/archivo-latin-800-normal.woff2) format("woff2"); }
+@font-face { font-family: "Public Sans"; font-weight: 400; src: url(fonts/public-sans-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Public Sans"; font-weight: 600; src: url(fonts/public-sans-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Public Sans"; font-weight: 700; src: url(fonts/public-sans-latin-700-normal.woff2) format("woff2"); }
+</style>
+<script>
+  // absolute font addresses, so the copy html2canvas makes (cardToBlob) finds them too
+  { const f = document.getElementById("fonts"); f.textContent = f.textContent.replace(/url\(fonts\//g, `url(${new URL("fonts/", location.href)}`); }
+</script>
+<style>
+/* One fixed look (these are images): deep navy from the logo, one bright accent. */
+:root {
+  --navy-0: #071733;
+  --navy-1: #0d2550;
+  --navy-2: #17407f;
+  --ink: #ffffff;
+  --ink-2: #c7d5ee;
+  --muted: #8ea3c8;
+  --line: rgba(255, 255, 255, 0.12);
+  --accent: #5cc8ff;
+  --accent-2: #2f8fe0;
+  --track: rgba(255, 255, 255, 0.08);
+  --up: #7be3a5;
+  --down: #ff9a8b;
+  --display: "Archivo", "Arial Narrow", sans-serif;
+  --body: "Public Sans", "Liberation Sans", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { background: #000; }
+body { font-family: var(--body); color: var(--ink); }
+
+.card {
+  position: relative; overflow: hidden;
+  width: 1080px; height: 1350px; padding: 84px 84px 72px;
+  display: flex; flex-direction: column; gap: 40px;
+  background:
+    radial-gradient(1200px 900px at 110% -10%, rgba(92, 200, 255, 0.22), transparent 60%),
+    radial-gradient(900px 700px at -20% 110%, rgba(47, 143, 224, 0.20), transparent 60%),
+    linear-gradient(160deg, var(--navy-1), var(--navy-0) 70%);
+  font-variant-numeric: tabular-nums;
+}
+/* the giant "76" watermark: the majority line this whole site is about */
+.card::before {
+  content: "76"; position: absolute; right: -60px; bottom: -150px;
+  font: 800 760px/1 var(--display); letter-spacing: -0.06em;
+  color: transparent; -webkit-text-stroke: 3px rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+.card > * { position: relative; }
+
+.top { display: flex; justify-content: space-between; align-items: center; }
+.brand { display: flex; align-items: center; gap: 16px; font: 800 36px var(--display); letter-spacing: -0.01em; }
+.brand img { width: 64px; height: 64px; border-radius: 12px; }
+.date { font: 600 26px var(--body); color: var(--ink-2); padding: 10px 20px; border: 1.5px solid var(--line); border-radius: 999px; }
+
+.eyebrow { font: 700 26px var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 800 92px/1.0 var(--display); letter-spacing: -0.02em; text-wrap: balance; margin-top: 14px; }
+
+/* coalitions card */
+.hero { padding: 40px 44px; border-radius: 28px; background: rgba(255, 255, 255, 0.06); border: 1.5px solid var(--line); display: grid; gap: 22px; }
+.hero-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.hero .label { font: 600 26px var(--body); color: var(--ink-2); }
+.hero .big { font: 800 200px/0.82 var(--display); letter-spacing: -0.04em; color: var(--accent); }
+.hero .big small { font-size: 0.42em; letter-spacing: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; }
+.chip { font: 700 38px var(--display); padding: 10px 24px; border-radius: 999px; background: var(--ink); color: var(--navy-0); }
+.hero .meta { font: 400 24px var(--body); color: var(--muted); }
+
+.rows { display: grid; gap: 22px; }
+.row { display: grid; grid-template-columns: 1fr 150px; align-items: center; gap: 8px 24px; }
+.row .name { font: 700 34px var(--display); letter-spacing: -0.005em; }
+.row .name .sep { color: var(--muted); font-weight: 400; padding: 0 6px; }
+.row .val { font: 800 40px var(--display); text-align: right; }
+.tag { display: inline-block; vertical-align: middle; margin-left: 14px; padding: 5px 14px; border-radius: 999px;
+  font: 700 20px var(--body); letter-spacing: 0.06em; text-transform: uppercase; }
+.tag.maj { background: var(--accent); color: var(--navy-0); }
+.tag.min { border: 2px solid var(--muted); color: var(--ink-2); }
+.hero .tag { margin-left: 0; margin-right: 14px; font-size: 22px; }
+.bar { grid-column: 1 / -1; height: 12px; border-radius: 6px; background: var(--track); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); }
+
+/* bar-chart cards */
+.chart { display: grid; gap: 10px; }
+.compact h1 { font-size: 80px; }
+.prow { display: grid; grid-template-columns: 170px 1fr 120px 110px; align-items: center; gap: 18px; height: 50px; }
+.prow .p { font: 700 32px var(--display); text-align: right; }
+.prow .track { position: relative; height: 34px; }
+.prow .track i { position: absolute; inset: 0 auto 0 0; border-radius: 0 8px 8px 0; background: linear-gradient(90deg, var(--accent-2), var(--accent)); }
+.prow.lead .track i { background: linear-gradient(90deg, #7fd8ff, #ffffff); }
+.prow .v { font: 800 38px var(--display); }
+.prow .d { font: 700 26px var(--body); text-align: right; }
+.d.up { color: var(--up); } .d.down { color: var(--down); } .d.flat { color: var(--muted); }
+.legend { font: 400 24px var(--body); color: var(--muted); }
+
+.prow.tight { height: 44px; }
+.prow.tight .p, .prow.tight .v { font-size: 30px; }
+.prow.tight .track { height: 28px; }
+.sub { font: 600 28px var(--body); color: var(--ink-2); margin-top: 18px; }
+
+/* premier card */
+.crown { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
+.crown .party { font: 800 150px/0.9 var(--display); letter-spacing: -0.03em; }
+.crown .big { font: 800 150px/0.9 var(--display); letter-spacing: -0.04em; color: var(--accent); }
+.crown .big small { font-size: 0.42em; }
+
+/* formation card */
+.split { display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: center; }
+.split .big { font: 800 170px/0.85 var(--display); letter-spacing: -0.04em; color: var(--accent); }
+.split .big small { font-size: 0.42em; }
+.split p { font: 600 34px/1.25 var(--body); color: var(--ink); }
+.dot { display: inline-block; width: 22px; height: 22px; border-radius: 6px; margin-right: 14px; vertical-align: -2px; }
+.seg { display: flex; height: 54px; border-radius: 14px; overflow: hidden; gap: 4px; }
+.seg i { display: block; height: 100%; }
+.legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 40px; }
+.legend-grid div { display: flex; justify-content: space-between; font: 600 30px var(--body); color: var(--ink-2); }
+.legend-grid b { font: 800 32px var(--display); color: var(--ink); }
+.sizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.sizes div { border: 1.5px solid var(--line); border-radius: 22px; padding: 22px 26px; display: grid; gap: 4px; }
+.sizes div.top { background: rgba(92, 200, 255, 0.12); border-color: var(--accent); }
+.sizes b { font: 800 64px/1 var(--display); }
+.sizes span { font: 600 26px var(--body); color: var(--ink-2); }
+
+/* trend card */
+.trend svg { display: block; overflow: visible; }
+.trend text { font-family: var(--body); }
+
+/* eerste kamer card */
+.ek { display: grid; gap: 12px; }
+.ek-row { display: grid; grid-template-columns: 1fr auto; gap: 6px 24px; align-items: center; padding: 14px 24px 12px; border-radius: 22px; background: rgba(255, 255, 255, 0.06); border: 1.5px solid var(--line); }
+.ek-row .name { font: 700 30px var(--display); display: flex; align-items: center; gap: 14px; }
+.ek-row .name small { font: 600 24px var(--body); color: var(--ink-2); }
+.ek-row .pct { font: 800 60px/0.9 var(--display); letter-spacing: -0.03em; }
+.ek-row .pct small { font-size: 0.45em; }
+.ek-row .pct .cu { display: inline-block; margin-left: 14px; font: 700 26px var(--body); letter-spacing: 0; color: var(--ink-2); vertical-align: middle; }
+.ek-seats { grid-column: 1 / -1; position: relative; height: 14px; border-radius: 7px; background: var(--track); }
+.ek-seats i { position: absolute; inset: 0 auto 0 0; border-radius: 7px; }
+.ek-seats b { position: absolute; top: -8px; bottom: -8px; width: 3px; background: #ffffff; left: 50.67%; }
+.ek-seats span { position: absolute; top: 20px; font: 600 20px var(--body); color: var(--muted); }
+
+/* og: the landscape link preview (1200x630) for search results and social media */
+.card.og { width: 1200px; height: 630px; padding: 44px 56px 36px; gap: 20px; }
+.card.og::before { font-size: 400px; right: -30px; bottom: -80px; }
+.og .brand { font-size: 30px; gap: 12px; }
+.og .brand img { width: 52px; height: 52px; }
+.og .date { font-size: 22px; padding: 8px 16px; }
+.og .cols { display: grid; grid-template-columns: 430px 1fr; gap: 44px; align-items: center; }
+.og .eyebrow { font-size: 20px; }
+.og h1 { font-size: 66px; margin-top: 10px; }
+.og .lead { margin-top: 18px; font: 600 24px/1.35 var(--body); color: var(--ink-2); }
+.og .rows { gap: 16px; }
+.og .row { grid-template-columns: 1fr 96px; gap: 6px 16px; }
+.og .row .name { font-size: 27px; }
+.og .row .val { font-size: 32px; }
+.og .tag { font-size: 15px; padding: 3px 10px; margin-left: 10px; }
+.og .foot { padding-top: 14px; }
+.og .foot p { font-size: 18px; }
+.og .foot .url { font-size: 30px; }
+
+.spacer { flex: 1; }
+.foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; border-top: 1.5px solid var(--line); padding-top: 26px; }
+.foot p { font: 400 23px/1.45 var(--body); color: var(--muted); max-width: 640px; }
+.foot .url { font: 800 40px var(--display); color: var(--ink); letter-spacing: -0.01em; }
+</style>
+</head>
+<body>
+<div id="card"></div>
+<script>
+"use strict";
+const MONTHS = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"];
+const nl = (v, d = 0) => Number(v).toLocaleString("nl-NL", { minimumFractionDigits: d, maximumFractionDigits: d });
+const longDate = (iso) => { const [y, m, d] = iso.split("-").map(Number); return `${d} ${MONTHS[m - 1]} ${y}`; };
+const dmyToIso = (s) => { const [d, m, y] = s.split("-"); return `${y}-${m}-${d}`; };
+const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function shell(data, inner, note, cls = "") {
+  return `<div class="card ${cls}" id="shot">
+    <div class="top">
+      <div class="brand"><img src="../icon.png" alt="">76 Zetels</div>
+      <div class="date">${longDate(dmyToIso(data.lastPoll))}</div>
+    </div>
+    ${inner}
+    <div class="spacer"></div>
+    <div class="foot">
+      <p>${note}</p>
+      <div class="url">76zetels.com</div>
+    </div>
+  </div>`;
+}
+
+function coalitionRanking(data) {
+  const sm = data.sims, groups = new Map();
+  sm.coalition.forEach((c, i) => {
+    const key = `${c}|${sm.majority[i]}`;
+    const g = groups.get(key) || { c, majority: sm.majority[i], n: 0, seats: 0 };
+    g.n++;
+    g.seats += sm.coalitions[c].reduce((t, p) => t + (sm.seats[p]?.[i] ?? 0), 0);
+    groups.set(key, g);
+  });
+  return [...groups.values()].sort((a, b) => b.n - a.n)
+    .map((g) => ({ parties: sm.coalitions[g.c], pct: (g.n / sm.n) * 100, seats: g.seats / g.n, majority: !!g.majority }))
+    .filter((c) => c.parties[0] !== "Geen kabinet");     // simulations without a cabinet (main.py)
+}
+
+const tag = (majority) => majority
+  ? '<span class="tag maj">Meerderheid</span>'
+  : '<span class="tag min">Minderheid</span>';
+
+const CARDS = {
+  coalities(data) {
+    const rows = coalitionRanking(data);
+    const top = rows[0], rest = rows.slice(1, 5), max = rest[0]?.pct || 1;
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Coalitieverwachting</div>
+        <h1>Wie gaat er regeren?</h1>
+      </div>
+      <div class="hero">
+        <div class="label">Meest waarschijnlijke coalitie</div>
+        <div class="hero-row">
+          <div class="chips">${top.parties.map((p) => `<span class="chip">${esc(p)}</span>`).join("")}</div>
+          <div class="big">${nl(top.pct)}<small>%</small></div>
+        </div>
+        <div class="meta">${tag(top.majority)}Gemiddeld ${nl(top.seats)} zetels als deze coalitie er komt</div>
+      </div>
+      <div class="rows">
+        ${rest.map((r) => `<div class="row">
+          <div class="name">${r.parties.map(esc).join('<span class="sep">·</span>')}${tag(r.majority)}</div>
+          <div class="val">${nl(r.pct)}%</div>
+          <div class="bar"><i style="width:${(r.pct / max) * 100}%"></i></div>
+        </div>`).join("")}
+      </div>`,
+      `Kans op elke coalitie na de volgende verkiezingen, op basis van ${nl(data.sims.n)} gesimuleerde verkiezingen en formaties. Meerderheid = 76 of meer zetels.`);
+  },
+
+  kansen(data) {
+    const sm = data.sims, count = {};
+    sm.coalition.forEach((c) => sm.coalitions[c].forEach((p) => { count[p] = (count[p] || 0) + 1; }));
+    const items = Object.entries(count).map(([p, n]) => ({ p, v: (n / sm.n) * 100 }))
+      .filter((x) => x.p !== "DNA" && x.v >= 1).sort((a, b) => b.v - a.v).slice(0, 10);
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Regeringsdeelname</div>
+        <h1>Wie komt er in het kabinet?</h1>
+      </div>
+      <div class="chart">
+        ${items.map((x, i) => `<div class="prow${i === 0 ? " lead" : ""}" style="grid-template-columns:170px 1fr 150px">
+          <div class="p">${esc(x.p)}</div>
+          <div class="track"><i style="width:${x.v}%"></i></div>
+          <div class="v">${nl(x.v)}%</div></div>`).join("")}
+      </div>`,
+      `Kans dat een partij in het volgende kabinet zit, op basis van ${nl(sm.n)} gesimuleerde verkiezingen en formaties.`, "compact");
+  },
+};
+
+const LINE_COLORS = ["#5cc8ff", "#ff9a5c", "#7be3a5", "#f7d154", "#f28fbf", "#b8a6ff"];
+const DIFF_COLORS = ["#d8f1ff", "#9edcff", "#5cc8ff", "#2f8fe0", "#1d5fb3", "#7f8ba3"];
+
+Object.assign(CARDS, {
+  premier(data) {
+    const items = Object.entries(data.grootste).filter(([, v]) => v >= 1).sort((a, b) => b[1] - a[1]);
+    const [lead, ...rest] = items;
+    const max = rest.length ? rest[0][1] : 1;
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Premierskans</div>
+        <h1>Wie levert de premier?</h1>
+      </div>
+      <div class="hero">
+        <div class="label">Grootste partij in het volgende kabinet</div>
+        <div class="crown"><div class="party">${esc(lead[0])}</div><div class="big">${nl(lead[1])}<small>%</small></div></div>
+      </div>
+      <div class="rows">
+        ${rest.slice(0, 5).map(([p, v]) => `<div class="row">
+          <div class="name">${esc(p)}</div><div class="val">${nl(v)}%</div>
+          <div class="bar"><i style="width:${(v / max) * 100}%"></i></div></div>`).join("")}
+      </div>`,
+      "De grootste partij in de coalitie levert meestal de premier, al zijn er uitzonderingen zoals kabinet-Schoof.");
+  },
+
+  formatie(data) {
+    const sm = data.sims;
+    const minority = (1 - sm.majority.reduce((a, b) => a + b, 0) / sm.n) * 100;
+    const dts = data.timeseries.moeilijkheid, kts = data.timeseries.kabinetsgrootte;
+    const last = (ts) => Object.fromEntries(Object.entries(ts.series).map(([k, v]) => [k, v.at(-1) || 0]));
+    const diff = last(dts), size = last(kts);
+    const cats = Object.keys(dts.series);
+    const sizes = Object.entries(size).sort((a, b) => b[1] - a[1]).slice(0, 3).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+    const topSize = Math.max(...sizes.map(([, v]) => v));
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Formatie</div>
+        <h1>Hoe moeilijk wordt de formatie?</h1>
+      </div>
+      <div class="split">
+        <div class="big">${nl(minority)}<small>%</small></div>
+        <p>kans dat de formatie eindigt in een kabinet zonder meerderheid van 76 zetels</p>
+      </div>
+      <div style="display:grid;gap:22px">
+        <div class="seg">${cats.map((c, i) => diff[c] > 0.5 ? `<i style="width:${diff[c]}%;background:${DIFF_COLORS[i]}"></i>` : "").join("")}</div>
+        <div class="legend-grid">${cats.map((c, i) => `<div><span><i class="dot" style="background:${DIFF_COLORS[i]}"></i>${esc(c)}</span><b>${nl(diff[c])}%</b></div>`).join("")}</div>
+      </div>
+      <div class="sizes">${sizes.map(([k, v]) => `<div class="${v === topSize ? "top" : ""}"><b>${nl(v)}%</b><span>${esc(k)}</span></div>`).join("")}</div>`,
+      "Moeilijkheid volgt uit hoe ver de standpunten van de coalitiepartijen uit elkaar liggen en wie wie uitsluit. Onderaan: kans op het aantal partijen.", "compact");
+  },
+
+  trend(data) {
+    // model output: chance of being in the cabinet per run date (PRO continues GL/PvdA)
+    const raw = data.timeseries.individual, series = { ...raw.series };
+    if (series.PRO && series["GL/PvdA"]) {
+      series.PRO = series.PRO.map((v, i) => Math.min(100, (v || 0) + (series["GL/PvdA"][i] || 0)));
+      delete series["GL/PvdA"];
+    }
+    delete series.DNA;
+    const ts = { dates: raw.dates, series }, n = ts.dates.length;
+    // skip test runs: rows in which every chance is a whole multiple of 10% (e.g. 29 Apr 2026)
+    const keys = Object.keys(series);
+    const idx = ts.dates.map((_, i) => i).filter((i) => !keys.every((k) => Math.abs((series[k][i] || 0) % 10) < 1e-6));
+    // calmer line for social media: average of the last 3 model runs at every point
+    const avg = {};
+    for (const k of keys) avg[k] = idx.map((_, j) => {
+      const win = idx.slice(Math.max(0, j - 2), j + 1).map((i) => series[k][i] || 0);
+      return win.reduce((a, b) => a + b, 0) / win.length;
+    });
+    const parties = keys.map((p) => [p, avg[p].at(-1)]).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([p]) => p);
+    const W = 912, H = 640, m = { l: 76, r: 170, t: 20, b: 50 };
+    const xs = idx.map((i) => Date.parse(ts.dates[i]));
+    const x0 = xs[0], x1 = xs.at(-1), top = 100;
+    const X = (t) => m.l + ((t - x0) / (x1 - x0 || 1)) * (W - m.l - m.r);
+    const Y = (v) => m.t + (1 - v / top) * (H - m.t - m.b);
+    let svg = "";
+    for (let v = 0; v <= top; v += 25) {
+      svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,${v === 0 ? 0.3 : 0.1})" stroke-width="1.5"/>`;
+      svg += `<text x="${m.l - 14}" y="${Y(v) + 9}" text-anchor="end" fill="#8ea3c8" font-size="24">${v}%</text>`;
+    }
+    const months = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+    for (let k = 0; k < 4; k++) {
+      const t = x0 + ((x1 - x0) * k) / 3, d = new Date(t);
+      svg += `<text x="${X(t)}" y="${H - 10}" text-anchor="${k === 0 ? "start" : k === 3 ? "end" : "middle"}" fill="#8ea3c8" font-size="24">${d.getDate()} ${months[d.getMonth()]}</text>`;
+    }
+    const ends = [];
+    parties.forEach((p, k) => {
+      const pts = idx.map((i, j) => `${X(xs[j]).toFixed(1)},${Y(avg[p][j]).toFixed(1)}`);
+      svg += `<polyline points="${pts.join(" ")}" fill="none" stroke="${LINE_COLORS[k]}" stroke-width="${k === 0 ? 6 : 4}" stroke-linejoin="round" stroke-linecap="round"/>`;
+      const v = avg[p].at(-1);
+      svg += `<circle cx="${X(x1)}" cy="${Y(v)}" r="8" fill="${LINE_COLORS[k]}" stroke="#0d2550" stroke-width="3"/>`;
+      ends.push({ p, v, y: Y(v), c: LINE_COLORS[k] });
+    });
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 34) ends[i].y = ends[i - 1].y + 34;
+    ends.forEach((e) => {
+      svg += `<text x="${W - m.r + 22}" y="${e.y + 10}" fill="${e.c}" font-size="30" font-weight="700" font-family="Archivo">${esc(e.p)} <tspan fill="#ffffff">${nl(e.v)}%</tspan></text>`;
+    });
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Trend</div>
+        <h1>Wie wint aan kans op het kabinet?</h1>
+      </div>
+      <div class="trend"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svg}</svg></div>`,
+      "Kans op regeringsdeelname, gemiddelde van de laatste drie modelruns. PRO is inclusief de voorganger GL/PvdA.", "compact");
+  },
+});
+
+Object.assign(CARDS, {
+  eerstekamer(data) {
+    const ek = data.eersteKamer, ts = ek.timeseries;
+    const variants = [
+      { key: "CDA, D66, VVD", cu: "CDA, CU, D66, VVD", label: "Kabinet", sub: "CDA · D66 · VVD" },
+      { key: "CDA, D66, JA21, SGP, VVD", cu: "CDA, CU, D66, JA21, SGP, VVD", label: "Kabinet + JA21 + SGP", sub: "" },
+      { key: "CDA, D66, PRO, VVD, Volt", cu: "CDA, CU, D66, PRO, VVD, Volt", label: "Kabinet + PRO + Volt", sub: "" },
+    ].map((v, k) => ({ ...v, color: LINE_COLORS[[3, 1, 0][k]], now: ek.current.find((c) => c.coalition === v.key) }))
+     .filter((v) => v.now);
+    // small trend: every run that has a value for at least one variant
+    const W = 912, H = 160, m = { l: 70, r: 20, t: 14, b: 40 };
+    const idx = ts.dates.map((d, i) => i).filter((i) => variants.some((v) => ts.series[v.key]?.[i] != null));
+    const xs = idx.map((i) => Date.parse(ts.dates[i])), x0 = xs[0], x1 = xs.at(-1);
+    const X = (t) => m.l + ((t - x0) / (x1 - x0 || 1)) * (W - m.l - m.r);
+    const Y = (v) => m.t + (1 - v / 100) * (H - m.t - m.b);
+    let svg = "";
+    for (const v of [0, 50, 100]) {
+      svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,${v === 0 ? 0.3 : 0.1})" stroke-width="1.5"/>`;
+      svg += `<text x="${m.l - 14}" y="${Y(v) + 8}" text-anchor="end" fill="#8ea3c8" font-size="22">${v}%</text>`;
+    }
+    const months = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+    [x0, x1].forEach((t, k) => { const d = new Date(t); svg += `<text x="${X(t)}" y="${H - 8}" text-anchor="${k ? "end" : "start"}" fill="#8ea3c8" font-size="22">${d.getDate()} ${months[d.getMonth()]}</text>`; });
+    const line = (key, color, dash) => {
+      let d = "", pen = false;
+      idx.forEach((i, j) => {
+        const val = ts.series[key]?.[i];
+        if (val == null) { pen = false; return; }
+        d += `${pen ? "L" : "M"}${X(xs[j]).toFixed(1)},${Y(val).toFixed(1)}`; pen = true;
+      });
+      return d ? `<path d="${d}" fill="none" stroke="${color}" stroke-width="${dash ? 3 : 4}" ${dash ? 'stroke-dasharray="3 9" opacity="0.85"' : ""} stroke-linejoin="round" stroke-linecap="round"/>` : "";
+    };
+    variants.forEach((v) => { svg += line(v.key, v.color, false); });
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Eerste Kamer</div>
+        <h1>Haalt het kabinet 38 zetels in de Eerste Kamer?</h1>
+      </div>
+      <div class="ek">
+        ${variants.map((v) => `<div class="ek-row">
+          <div class="name"><i class="dot" style="background:${v.color};margin:0"></i>${esc(v.label)}${v.sub ? `<small>${esc(v.sub)}</small>` : ""}</div>
+          <div class="pct">${nl(v.now.rate)}<small>%</small>${v.now.withCU ? `<span class="cu">(met CU ${nl(v.now.withCU.rate)}%)</span>` : ""}</div>
+          <div class="ek-seats"><i style="width:${(v.now.seats / 75) * 100}%;background:${v.color}"></i><b></b></div>
+          <div class="note" style="grid-column:1/-1;font:600 22px var(--body);color:var(--muted);margin-top:0">Gemiddeld ${nl(v.now.seats)} van de 75 zetels · streep = 38</div>
+        </div>`).join("")}
+      </div>
+      <div class="trend"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svg}</svg></div>`,
+      "Kans op 38 of meer van de 75 zetels in de Eerste Kamer na de verkiezingen van 2027. Tussen haakjes: als de CU de coalitie ook steunt.", "compact");
+  },
+});
+
+Object.assign(CARDS, {
+  og(data) {
+    const rows = coalitionRanking(data).slice(0, 4), max = rows[0]?.pct || 1;
+    return shell(data, `
+      <div class="cols">
+        <div>
+          <div class="eyebrow">Coalitieverwachting</div>
+          <h1>Wie gaat er regeren?</h1>
+          <p class="lead">Kansen op coalities uit ${nl(data.sims.n)} gesimuleerde verkiezingen en formaties.</p>
+        </div>
+        <div class="rows">
+          ${rows.map((r) => `<div class="row">
+            <div class="name">${r.parties.map(esc).join('<span class="sep">·</span>')}${tag(r.majority)}</div>
+            <div class="val">${nl(r.pct)}%</div>
+            <div class="bar"><i style="width:${(r.pct / max) * 100}%"></i></div>
+          </div>`).join("")}
+        </div>
+      </div>`,
+      "Op basis van de Nederlandse peilingen.", "og");
+  },
+});
+
+// ---- seats, hemicycle, blocs, kingmaker ------------------------------------------------
+// blocs as in data/blokken.csv
+const BLOCS = [
+  { key: "links", label: "Links", color: "#f28fbf", parties: ["PRO", "GL/PvdA", "GL", "PvdA", "SP", "PvdD", "Volt", "Denk", "BIJ1"] },
+  { key: "midden", label: "Midden", color: "#7be3a5", parties: ["D66", "CDA", "CU", "NSC", "50PLUS"] },
+  { key: "rechts", label: "Rechts", color: "#5cc8ff", parties: ["VVD", "SGP"] },
+  { key: "populistisch", label: "Populistisch rechts", color: "#f7d154", parties: ["PVV", "FvD", "JA21", "BBB", "BVNL", "DNA", "LVF", "LPF", "TON", "VNL", "DPK", "PVN", "EenNL"] },
+];
+const blocOf = (p) => BLOCS.find((b) => b.parties.includes(p));
+const quantile = (arr, q) => { const s = [...arr].sort((a, b) => a - b); return s[Math.min(s.length - 1, Math.max(0, Math.round(q * (s.length - 1))))]; };
+const meanOf = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+// parties that matter: at least half a seat on average (PRO also holds GL/PvdA's seats)
+function partySeats(data) {
+  const out = {};
+  for (const [p, arr] of Object.entries(data.sims.seats)) {
+    if (p === "GL/PvdA" && data.sims.seats.PRO) continue;
+    const a = p === "PRO" && data.sims.seats["GL/PvdA"] ? arr.map((v, i) => v + (data.sims.seats["GL/PvdA"][i] || 0)) : arr;
+    out[p] = a;
+  }
+  return out;
+}
+
+Object.assign(CARDS, {
+  zetels(data) {
+    const seats = partySeats(data);
+    const items = Object.entries(seats).map(([p, a]) => ({ p, mid: quantile(a, 0.5), lo: quantile(a, 0.1), hi: quantile(a, 0.9), mean: meanOf(a) }))
+      .filter((x) => x.mean >= 0.5).sort((a, b) => b.mean - a.mean).slice(0, 12);
+    const max = Math.ceil(Math.max(...items.map((x) => x.hi)) / 10) * 10;
+    const pos = (v) => (v / max) * 100;
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Zetelverwachting</div>
+        <h1>Hoeveel zetels haalt elke partij?</h1>
+      </div>
+      <div class="chart" style="gap:6px">
+        ${items.map((x, i) => `<div class="prow tight" style="grid-template-columns:150px 1fr 150px">
+          <div class="p">${esc(x.p)}</div>
+          <div class="track" style="height:30px">
+            <span style="position:absolute;top:13px;height:4px;left:0;right:0;background:var(--track);border-radius:2px"></span>
+            <i style="left:${pos(x.lo)}%;width:${Math.max(pos(x.hi) - pos(x.lo), 1.2)}%;border-radius:15px;opacity:${i === 0 ? 1 : 0.85}"></i>
+            <b style="position:absolute;top:-4px;bottom:-4px;width:6px;border-radius:3px;background:#fff;left:calc(${pos(x.mid)}% - 3px)"></b>
+          </div>
+          <div class="v" style="text-align:right">${x.lo === x.hi ? nl(x.mid) : `${nl(x.mid)}<span style="font:600 22px var(--body);color:var(--muted)"> ${nl(x.lo)}–${nl(x.hi)}</span>`}</div></div>`).join("")}
+      </div>
+      <div class="legend">Witte streep: middelste uitkomst · balk: 8 van de 10 simulaties</div>`,
+      `Zetels op verkiezingsdag uit ${nl(data.sims.n)} simulaties. De marges zijn bewust ruim.`, "compact");
+  },
+
+  halfrond(data) {
+    const seats = partySeats(data);
+    // expected seats, rounded to 150 with the largest remainders
+    const mean = Object.entries(seats).map(([p, a]) => ({ p, v: meanOf(a) })).filter((x) => x.v >= 0.5);
+    const total = mean.reduce((t, x) => t + x.v, 0);
+    mean.forEach((x) => { x.q = (x.v / total) * 150; x.s = Math.floor(x.q); });
+    let rest = 150 - mean.reduce((t, x) => t + x.s, 0);
+    [...mean].sort((a, b) => (b.q - b.s) - (a.q - a.s)).forEach((x) => { if (rest > 0) { x.s++; rest--; } });
+    const order = [];
+    BLOCS.forEach((b, bi) => mean.filter((x) => blocOf(x.p) === b && x.s > 0).sort((a, c) => c.s - a.s)
+      .forEach((x, k) => order.push({ ...x, bloc: b, shade: k })));
+    // seat positions: 150 dots in 8 rows of a half circle, filled left to right
+    const W = 912, H = 500, cx = W / 2, cy = 470, R1 = 170, R2 = 440, ROWS = 8;
+    const radii = Array.from({ length: ROWS }, (_, r) => R1 + ((R2 - R1) * r) / (ROWS - 1));
+    const lens = radii.map((r) => r);
+    const sumLen = lens.reduce((a, b) => a + b, 0);
+    let counts = radii.map((r) => Math.round((150 * r) / sumLen));
+    let diff = 150 - counts.reduce((a, b) => a + b, 0);
+    counts[ROWS - 1] += diff;
+    const dots = [];
+    radii.forEach((r, ri) => { for (let k = 0; k < counts[ri]; k++) { const a = Math.PI - (Math.PI * (k + 0.5)) / counts[ri]; dots.push({ a, r }); } });
+    dots.sort((a, b) => b.a - a.a || a.r - b.r);
+    const colorFor = (x) => {
+      const c = x.bloc.color, light = Math.min(x.shade, 4) * 0.13;
+      return `color-mix(in srgb, ${c} ${100 - light * 100}%, #ffffff)`;
+    };
+    let k = 0, svg = "";
+    order.forEach((x) => { for (let s = 0; s < x.s; s++, k++) { const d = dots[k]; svg += `<circle cx="${(cx + d.r * Math.cos(d.a)).toFixed(1)}" cy="${(cy - d.r * Math.sin(d.a)).toFixed(1)}" r="13" fill="${colorFor(x)}"/>`; } });
+    svg += `<line x1="${cx}" x2="${cx}" y1="${cy - R2 - 26}" y2="${cy - R1 + 20}" stroke="#ffffff" stroke-width="3" stroke-dasharray="6 8" opacity="0.7"/>`;
+    svg += `<text x="${cx}" y="${cy - 40}" text-anchor="middle" fill="#ffffff" font-size="64" font-weight="800" font-family="Archivo">150</text>`;
+    svg += `<text x="${cx}" y="${cy}" text-anchor="middle" fill="#8ea3c8" font-size="24">zetels · 76 = meerderheid</text>`;
+    const legend = BLOCS.map((b) => {
+      const ps = order.filter((x) => x.bloc === b);
+      if (!ps.length) return "";
+      return `<div style="display:grid;gap:8px">
+        <div style="font:700 24px var(--body);letter-spacing:.08em;text-transform:uppercase;color:${b.color}">${b.label} · ${ps.reduce((t, x) => t + x.s, 0)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 20px">${ps.map((x) => `<span style="font:600 26px var(--body);color:var(--ink-2)"><i class="dot" style="background:${colorFor(x)};margin-right:8px"></i>${esc(x.p)} <b style="font:800 28px var(--display);color:#fff">${x.s}</b></span>`).join("")}</div>
+      </div>`;
+    }).join("");
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Tweede Kamer</div>
+        <h1>Zo ziet de Kamer er nu uit</h1>
+      </div>
+      <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svg}</svg>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px 40px">${legend}</div>`,
+      `Verwachte zetels per partij (gemiddelde van ${nl(data.sims.n)} simulaties, afgerond op 150), gegroepeerd per blok.`, "compact");
+  },
+
+  blokken(data) {
+    const seats = partySeats(data), n = data.sims.n;
+    const bloc = Object.fromEntries(BLOCS.map((b) => [b.key, Array.from({ length: n }, (_, i) => b.parties.reduce((t, p) => t + (seats[p]?.[i] || 0), 0))]));
+    const rows = BLOCS.map((b) => ({ ...b, mid: quantile(bloc[b.key], 0.5), lo: quantile(bloc[b.key], 0.1), hi: quantile(bloc[b.key], 0.9) }));
+    const share = (keys) => (100 * Array.from({ length: n }, (_, i) => keys.reduce((t, k) => t + bloc[k][i], 0) >= 76).filter(Boolean).length) / n;
+    const combos = [
+      { keys: ["rechts", "populistisch"], label: "Rechts + populistisch rechts" },
+      { keys: ["links", "midden"], label: "Links + midden" },
+      { keys: ["midden", "rechts"], label: "Midden + rechts" },
+    ].map((c) => ({ ...c, v: share(c.keys) }));
+    const pos = (v) => (v / 90) * 100;
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Blokken</div>
+        <h1>Hoe groot worden de blokken?</h1>
+      </div>
+      <div class="chart" style="gap:16px">
+        ${rows.map((r) => `<div style="display:grid;grid-template-columns:1fr auto;gap:10px 20px;align-items:end">
+          <div style="font:700 34px var(--display)"><i class="dot" style="background:${r.color}"></i>${r.label}
+            <span style="font:600 22px var(--body);color:var(--muted);margin-left:8px">${r.parties.filter((p) => seats[p] && meanOf(seats[p]) >= 0.5).map(esc).join(" · ")}</span></div>
+          <div style="font:800 44px var(--display)">${nl(r.mid)}<span style="font:600 22px var(--body);color:var(--muted)"> ${nl(r.lo)}–${nl(r.hi)}</span></div>
+          <div style="grid-column:1/-1;position:relative;height:16px;border-radius:8px;background:var(--track)">
+            <i style="position:absolute;top:0;bottom:0;left:${pos(r.lo)}%;width:${pos(r.hi) - pos(r.lo)}%;border-radius:8px;background:${r.color}"></i>
+            <b style="position:absolute;top:-6px;bottom:-6px;width:6px;border-radius:3px;background:#fff;left:calc(${pos(r.mid)}% - 3px)"></b>
+          </div></div>`).join("")}
+      </div>
+      <div class="hero" style="gap:10px;padding:24px 36px">
+        <div class="label">Kans op 76 zetels of meer samen</div>
+        ${combos.map((c) => `<div style="display:flex;justify-content:space-between;align-items:baseline;font:700 32px var(--display)">
+          <span>${c.label}</span><span style="font:800 48px var(--display);color:var(--accent)">${nl(c.v)}%</span></div>`).join("")}
+      </div>`,
+      `Zetels per blok: middelste uitkomst en 8 van de 10 simulaties.`, "compact");
+  },
+
+  onmisbaar(data) {
+    // key position: the party is in every option the formation weighed (option 1, 2 and,
+    // when there is one, 3), so it can choose which cabinet is formed
+    const sm = data.sims, n = sm.n;
+    // only: the party is the only one with the key position in that simulation
+    const pivot = {}, only = {}, inCab = {};
+    const howMany = [0, 0, 0, 0, 0];                  // simulations with 0, 1, 2, 3, 4+ parties in a key position
+    const key = (p) => (p === "GL/PvdA" ? "PRO" : p);
+    sm.coalition.forEach((c, i) => {
+      const opts = [c, ...(sm.options?.[i] || []).filter((o) => o >= 0)].map((o) => sm.coalitions[o]);
+      const kings = opts.length > 1 ? opts[0].filter((p) => p !== "Geen kabinet" && opts.every((o) => o.includes(p))) : [];
+      howMany[Math.min(kings.length, 4)]++;
+      if (kings.length === 1) only[key(kings[0])] = (only[key(kings[0])] || 0) + 1;
+      opts[0].forEach((p) => {
+        if (p === "Geen kabinet") return;
+        inCab[key(p)] = (inCab[key(p)] || 0) + 1;
+        if (opts.length > 1 && opts.every((o) => o.includes(p))) pivot[key(p)] = (pivot[key(p)] || 0) + 1;
+      });
+    });
+    const items = Object.keys(inCab).filter((p) => p !== "DNA")
+      .map((p) => ({ p, piv: (100 * (pivot[p] || 0)) / n, only: (100 * (only[p] || 0)) / n, cab: (100 * inCab[p]) / n }))
+      .filter((x) => x.cab >= 2).sort((a, b) => b.piv - a.piv).slice(0, 5);
+    const lead = items[0];
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Sleutelpositie</div>
+        <h1>Wie kiest het kabinet?</h1>
+      </div>
+      <div class="hero">
+        <div class="label" style="display:flex;justify-content:space-between"><span>Vaakst in elke optie van de formatie</span><span style="color:#8ea3c8">als enige ${nl(lead.only)}%</span></div>
+        <div class="crown"><div class="party">${esc(lead.p)}</div><div class="big">${nl(lead.piv)}<small>%</small></div></div>
+      </div>
+      <div class="chart" style="gap:6px">
+        <div class="prow tight" style="grid-template-columns:150px 1fr 110px 150px;color:#8ea3c8;font-size:22px">
+          <div></div><div></div><div class="v" style="font-size:22px;color:#8ea3c8">alle</div><div class="v" style="font-size:22px;color:#8ea3c8">als enige</div></div>
+        ${items.slice(1).map((x) => `<div class="prow tight" style="grid-template-columns:150px 1fr 110px 150px">
+          <div class="p">${esc(x.p)}</div>
+          <div class="track"><span style="position:absolute;inset:0 auto 0 0;width:${x.cab}%;background:var(--track);border-radius:0 8px 8px 0"></span><i style="width:${x.piv}%"></i></div>
+          <div class="v">${nl(x.piv)}%</div><div class="v" style="color:#8ea3c8">${nl(x.only)}%</div></div>`).join("")}
+      </div>
+      <div class="legend">Blauw: sleutelpositie · grijs: in het kabinet · als enige: de enige kingmaker</div>
+      <div style="display:flex;align-items:flex-end;gap:28px;margin-top:0">
+        <div style="font-size:22px;color:#8ea3c8;width:210px;line-height:1.25;padding-bottom:34px">Aantal kingmakers per simulatie</div>
+        ${howMany.map((v, k) => { const p = (100 * v) / n, hmax = Math.max(...howMany) / n * 100;
+          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="font-size:22px;font-weight:700;color:#ffffff">${nl(p)}%</div>
+            <div style="width:56px;height:${Math.max(3, (p / hmax) * 76)}px;background:#5cc8ff;border-radius:4px 4px 0 0"></div>
+            <div style="width:100%;border-top:2px solid rgba(255,255,255,0.3);padding-top:6px;text-align:center;font-size:22px;color:#8ea3c8">${k === 4 ? "4+" : k}</div></div>`; }).join("")}
+      </div>`,
+      `Sleutelpositie: in elke optie van de formatie (1e, 2e en zo mogelijk 3e keuze).`, "compact");
+  },
+});
+
+Object.assign(CARDS, {
+  blokkentrend(data) {
+    // polling average per bloc over time, plus the expected range on election day
+    const ts = data.timeseries.seats, seats = partySeats(data), n = data.sims.n;
+    const lines = BLOCS.map((b) => ({ ...b, values: ts.dates.map((_, i) => {
+      let t = 0, any = false;
+      for (const [p, v] of Object.entries(ts.series)) if (blocOf(p) === b && v[i] != null) { t += v[i]; any = true; }
+      return any ? t : null;
+    }) }));
+    lines.forEach((l) => {
+      const tot = Array.from({ length: n }, (_, i) => l.parties.reduce((t, p) => t + (seats[p]?.[i] || 0), 0));
+      l.mid = quantile(tot, 0.5); l.lo = quantile(tot, 0.1); l.hi = quantile(tot, 0.9);
+    });
+    const W = 912, H = 700, m = { l: 64, r: 300, t: 20, b: 50 }, band = { x: W - m.r + 44, w: 14, gap: 8 };
+    const xs = ts.dates.map((d) => Date.parse(d)), x0 = xs[0], x1 = xs.at(-1);
+    const top = Math.ceil(Math.max(...lines.flatMap((l) => [...l.values.filter((v) => v != null), l.hi])) / 10) * 10;
+    const X = (t) => m.l + ((t - x0) / (x1 - x0 || 1)) * (W - m.l - m.r);
+    const Y = (v) => m.t + (1 - v / top) * (H - m.t - m.b);
+    let svg = "";
+    for (let v = 0; v <= top; v += 20) {
+      svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,${v === 0 ? 0.3 : 0.1})" stroke-width="1.5"/>`;
+      svg += `<text x="${m.l - 14}" y="${Y(v) + 9}" text-anchor="end" fill="#8ea3c8" font-size="24">${v}</text>`;
+    }
+    const months = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+    for (let k = 0; k < 4; k++) {
+      const t = x0 + ((x1 - x0) * k) / 3, d = new Date(t);
+      svg += `<text x="${X(t)}" y="${H - 10}" text-anchor="${k === 0 ? "start" : k === 3 ? "end" : "middle"}" fill="#8ea3c8" font-size="24">${months[d.getMonth()]} '${String(d.getFullYear()).slice(2)}</text>`;
+    }
+    svg += `<text x="${band.x + (4 * band.w + 3 * band.gap) / 2}" y="${H - 10}" text-anchor="middle" fill="#8ea3c8" font-size="22">verkiezing</text>`;
+    const ends = [];
+    lines.forEach((l, k) => {
+      const bx = band.x + k * (band.w + band.gap);
+      let d = "", pen = false;
+      l.values.forEach((v, i) => { if (v == null) { pen = false; return; } d += `${pen ? "L" : "M"}${X(xs[i]).toFixed(1)},${Y(v).toFixed(1)}`; pen = true; });
+      svg += `<path d="${d}" fill="none" stroke="${l.color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      const last = l.values.filter((v) => v != null).at(-1);
+      svg += `<circle cx="${X(x1)}" cy="${Y(last)}" r="8" fill="${l.color}" stroke="#0d2550" stroke-width="3"/>`;
+      // expected range on election day
+      svg += `<rect x="${bx}" y="${Y(l.hi)}" width="${band.w}" height="${Y(l.lo) - Y(l.hi)}" rx="7" fill="${l.color}" opacity="0.45"/>`;
+      svg += `<rect x="${bx - 4}" y="${Y(l.mid) - 3}" width="${band.w + 8}" height="6" rx="3" fill="${l.color}"/>`;
+      ends.push({ l, y: Y(l.mid), last });
+    });
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 62) ends[i].y = ends[i - 1].y + 62;
+    ends.forEach((e) => {
+      svg += `<text x="${band.x + 4 * band.w + 3 * band.gap + 18}" y="${e.y - 4}" fill="${e.l.color}" font-size="27" font-weight="700" font-family="Archivo">${esc(e.l.label === "Populistisch rechts" ? "Populistisch" : e.l.label)}</text>`;
+      svg += `<text x="${band.x + 4 * band.w + 3 * band.gap + 18}" y="${e.y + 26}" fill="#ffffff" font-size="27" font-weight="800" font-family="Archivo">${nl(e.l.mid)} <tspan fill="#8ea3c8" font-size="20" font-weight="600" font-family="Public Sans">${nl(e.l.lo)}–${nl(e.l.hi)}</tspan></text>`;
+    });
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Blokken</div>
+        <h1>Hoe bewegen de blokken?</h1>
+      </div>
+      <div class="trend"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svg}</svg></div>`,
+      "Lijnen: peilingsgemiddelde per blok. Staafjes: verwachting op verkiezingsdag (8 van de 10 simulaties).", "compact");
+  },
+});
+
+Object.assign(CARDS, {
+  blokkenhistorie(data) {
+    // weekly poll averages of all cycles since 2006, the result on every election day, then the model
+    const hist = data.history, years = Object.keys(hist).sort();
+    const sumBloc = (series, i, b) => {
+      let t = 0, any = false;
+      for (const [p, v] of Object.entries(series)) if (blocOf(p) === b && v[i] != null) { t += v[i]; any = true; }
+      return any ? t : null;
+    };
+    const pts = [], results = [];
+    for (const y of years) {
+      const d = hist[y];
+      if (d.polls) d.polls.dates.forEach((dt, i) => pts.push({ t: Date.parse(dt), v: BLOCS.map((b) => sumBloc(d.polls.series, i, b)) }));
+      if (d.result) {
+        const v = BLOCS.map((b) => Object.entries(d.result.seats).reduce((t, [p, s2]) => t + (blocOf(p) === b ? s2 : 0), 0));
+        pts.push({ t: Date.parse(d.result.date), v }); results.push({ y, t: Date.parse(d.result.date), v });
+      }
+    }
+    const ts = data.timeseries.seats, lastT = pts.at(-1).t;
+    ts.dates.forEach((dt, i) => { if (Date.parse(dt) > lastT) pts.push({ t: Date.parse(dt), v: BLOCS.map((b) => sumBloc(ts.series, i, b)) }); });
+    // extra smoothing for the card (centred, 9 weekly points, not across gaps or election days)
+    const isResult = new Set(results.map((r) => r.t));
+    const raw = pts.map((pt) => pt.v.slice());
+    pts.forEach((pt, i) => {
+      if (isResult.has(pt.t)) return;
+      pt.v = pt.v.map((_, k) => {
+        let t = 0, c = 0;
+        for (let j = i - 4; j <= i + 4; j++) {
+          if (j < 0 || j >= pts.length || raw[j][k] == null || isResult.has(pts[j].t) || Math.abs(pts[j].t - pt.t) > 70 * 864e5) continue;
+          t += raw[j][k]; c++;
+        }
+        return c ? t / c : raw[i][k];
+      });
+    });
+    pts.at(-1).v = raw.at(-1);   // the label shows today's value as it is
+    const W = 912, H = 700, m = { l: 64, r: 210, t: 46, b: 50 };
+    const x0 = pts[0].t, x1 = pts.at(-1).t, top = 80;
+    const X = (t) => m.l + ((t - x0) / (x1 - x0)) * (W - m.l - m.r);
+    const Y = (v) => m.t + (1 - v / top) * (H - m.t - m.b);
+    let svg = "";
+    for (let v = 0; v <= top; v += 20) {
+      svg += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,${v === 0 ? 0.3 : 0.1})" stroke-width="1.5"/>`;
+      svg += `<text x="${m.l - 14}" y="${Y(v) + 9}" text-anchor="end" fill="#8ea3c8" font-size="24">${v}</text>`;
+    }
+    let lastLbl = -Infinity;
+    results.forEach((r) => {
+      svg += `<line x1="${X(r.t)}" x2="${X(r.t)}" y1="${m.t - 8}" y2="${Y(0)}" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" stroke-dasharray="4 6"/>`;
+      if (X(r.t) - lastLbl < 52) return;
+      svg += `<text x="${X(r.t)}" y="${m.t - 18}" text-anchor="middle" fill="#8ea3c8" font-size="21">'${r.y.slice(2)}</text>`;
+      lastLbl = X(r.t);
+    });
+    for (const yr of [2006, 2010, 2014, 2018, 2022, 2026]) {
+      const t = Date.UTC(yr, 0, 1);
+      if (t < x0 - 1e9 || t > x1) continue;
+      svg += `<text x="${Math.max(m.l, X(t))}" y="${H - 10}" text-anchor="${t < x0 ? "start" : "middle"}" fill="#8ea3c8" font-size="24">${yr}</text>`;
+    }
+    const ends = [];
+    BLOCS.forEach((b, k) => {
+      let d = "", pen = false;
+      pts.forEach((pt, i) => {
+        const v = pt.v[k];
+        if (v == null || (i && pt.t - pts[i - 1].t > 62 * 864e5)) pen = false;
+        if (v == null) return;
+        if (isResult.has(pt.t)) { pen = false; return; }   // results are dots, the line stays with the polls
+        d += `${pen ? "L" : "M"}${X(pt.t).toFixed(1)},${Y(v).toFixed(1)}`; pen = true;
+      });
+      svg += `<path d="${d}" fill="none" stroke="${b.color}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>`;
+      results.forEach((r) => { svg += `<circle cx="${X(r.t)}" cy="${Y(r.v[k])}" r="6" fill="${b.color}" stroke="#0d2550" stroke-width="2.5"/>`; });
+      const last = pts.at(-1).v[k];
+      svg += `<circle cx="${X(x1)}" cy="${Y(last)}" r="8" fill="${b.color}" stroke="#0d2550" stroke-width="3"/>`;
+      ends.push({ b, y: Y(last), last });
+    });
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 62) ends[i].y = ends[i - 1].y + 62;
+    ends.forEach((e) => {
+      svg += `<text x="${W - m.r + 26}" y="${e.y - 4}" fill="${e.b.color}" font-size="27" font-weight="700" font-family="Archivo">${esc(e.b.label === "Populistisch rechts" ? "Populistisch" : e.b.label)}</text>`;
+      svg += `<text x="${W - m.r + 26}" y="${e.y + 26}" fill="#ffffff" font-size="27" font-weight="800" font-family="Archivo">${nl(e.last)} <tspan fill="#8ea3c8" font-size="20" font-weight="600" font-family="Public Sans">zetels nu</tspan></text>`;
+    });
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Blokken sinds ${years[0]}</div>
+        <h1>Twintig jaar blokken</h1>
+      </div>
+      <div class="trend"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svg}</svg></div>`,
+      "Lijnen: peilingen per blok. Stippen: uitslagen. Gaten: geen peilingen in de dataset.", "compact");
+  },
+});
+
+// --- own card: chance of a cabinet with some parties and without others -------------------
+// #combinatie?met=VVD&zonder=PRO,PVV(&titel=...); same computation as "Gecombineerde kansen"
+// on the overview page. PRO also stands for GL/PvdA (one party under two names).
+const alias = (p) => (p === "GL/PvdA" ? "PRO" : p);
+function comboStats(data, met, zonder) {
+  const sm = data.sims, groups = new Map();
+  let hit = 0, majority = 0;
+  sm.coalition.forEach((c, i) => {
+    const set = new Set(sm.coalitions[c].map(alias));
+    if (set.has("Geen kabinet")) return;
+    if (!met.every((p) => set.has(alias(p))) || zonder.some((p) => set.has(alias(p)))) return;
+    hit++;
+    if (sm.majority[i]) majority++;
+    const key = `${c}|${sm.majority[i]}`;
+    const g = groups.get(key) || { c, majority: !!sm.majority[i], n: 0 };
+    g.n++; groups.set(key, g);
+  });
+  const rows = [...groups.values()].sort((a, b) => b.n - a.n)
+    .map((g) => ({ parties: sm.coalitions[g.c], pct: (100 * g.n) / sm.n, majority: g.majority }));
+  return { pct: (100 * hit) / sm.n, majorityPct: (100 * majority) / sm.n, rows };
+}
+const andList = (ps) => (ps.length > 1 ? `${ps.slice(0, -1).join(", ")} en ${ps.at(-1)}` : ps[0] || "");
+const small = (v) => (v > 0 && v < 0.5 ? "<1%" : `${nl(v)}%`);
+function comboTitle(met, zonder) {
+  const a = met.length ? `met ${andList(met)}` : "", b = zonder.length ? `zonder ${andList(zonder)}` : "";
+  return `Een kabinet ${[a, b].filter(Boolean).join(", ")}`.trim();
+}
+
+Object.assign(CARDS, {
+  combinatie(data, q) {
+    const list = (k) => (q.get(k) || "").split(",").map((x) => x.trim()).filter(Boolean);
+    const met = list("met"), zonder = list("zonder");
+    const st = comboStats(data, met, zonder);
+    const rows = st.rows.slice(0, 4), max = rows[0]?.pct || 1;
+    const title = q.get("titel") || comboTitle(met, zonder);
+    return shell(data, `
+      <div>
+        <div class="eyebrow">Kabinetskans</div>
+        <h1 style="font-size:${title.length > 34 ? 64 : 80}px">${esc(title)}</h1>
+      </div>
+      <div class="hero">
+        <div class="label">Kans op zo'n kabinet</div>
+        <div class="hero-row">
+          <div class="chips">${met.map((p) => `<span class="chip">${esc(p)}</span>`).join("")}${zonder.map((p) => `<span class="chip" style="opacity:.55">✕ ${esc(p)}</span>`).join("")}</div>
+          <div class="big">${nl(st.pct)}<small>%</small></div>
+        </div>
+        <div class="meta">Waarvan met een meerderheid: ${small(st.majorityPct)}</div>
+      </div>
+      <div class="rows">
+        ${rows.length ? rows.map((r) => `<div class="row">
+          <div class="name">${r.parties.map(esc).join('<span class="sep">·</span>')}${tag(r.majority)}</div>
+          <div class="val">${small(r.pct)}</div>
+          <div class="bar"><i style="width:${(r.pct / max) * 100}%"></i></div>
+        </div>`).join("") : `<div class="row"><div class="name">Geen enkele simulatie voldoet hieraan.</div></div>`}
+      </div>`,
+      `Uit ${nl(data.sims.n)} gesimuleerde verkiezingen en formaties; daaronder de vaakst gevormde van die coalities.`);
+  },
+});
+
+// the card as a PNG, made in the browser (the share page uses this for own cards)
+window.cardToBlob = async function () {
+  if (!window.html2canvas) {
+    await new Promise((ok, fail) => {
+      const sc = document.createElement("script");
+      sc.src = "../vendor/html2canvas.min.js"; sc.onload = ok; sc.onerror = fail;
+      document.head.append(sc);
+    });
+  }
+  const shot = document.getElementById("shot");
+  const canvas = await window.html2canvas(shot, { scale: 1, backgroundColor: null, useCORS: true, logging: false });
+  return new Promise((ok) => canvas.toBlob(ok, "image/png"));
+};
+
+async function render() {
+  const [name = "coalities", query = ""] = location.hash.slice(1).split("?");
+  const params = new URLSearchParams(query);
+  document.body.dataset.ready = "";
+  const data = await fetch("../data/current.json").then((r) => r.json());
+  if (name === "blokkenhistorie") data.history = await fetch("../data/history.json").then((r) => r.json());
+  document.getElementById("card").innerHTML = (CARDS[name] || CARDS.coalities)(data, params);
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((img) => img.complete ? 0 : new Promise((r) => { img.onload = img.onerror = r; })));
+  document.body.dataset.ready = "1";
+}
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>

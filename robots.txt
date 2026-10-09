@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://76zetels.com/sitemap.xml
